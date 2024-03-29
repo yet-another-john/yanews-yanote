@@ -48,7 +48,7 @@ def test_news_order(
         (pytest.lazy_fixture('anonymous_user1_client'), True),
     )
 )
-def test_form_availability_for_auth_client(parametrized_client, response, news_id_for_args):
+def test_form_for_auth_client(parametrized_client, response, news_id_for_args):
     url = reverse('news:detail', args=news_id_for_args)
     response = parametrized_client.get(url)
     assert 'form' in response.context
@@ -61,7 +61,7 @@ def test_form_availability_for_auth_client(parametrized_client, response, news_i
         (pytest.lazy_fixture('client'), False),
     )
 )
-def test_form_availability_for_anonymous_client(parametrized_client, response, news_id_for_args):
+def test_form_for_anonymous(parametrized_client, response, news_id_for_args):
     url = reverse('news:detail', args=news_id_for_args)
     response = parametrized_client.get(url)
     assert 'form' not in response.context

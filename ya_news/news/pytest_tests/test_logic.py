@@ -2,13 +2,13 @@ import pytest
 from pytest_django.asserts import assertRedirects
 from django.urls import reverse
 from http import HTTPStatus
-from news.models import News, Comment
+from news.models import Comment
 from pytest_django.asserts import assertRedirects, assertFormError
 from news.forms import WARNING, BAD_WORDS
 
 
 @pytest.mark.django_db
-def test_anonymous_user_cant_create_comment(client, form_data, news_id_for_args):
+def test_anonymous_cant_create_comment(client, form_data, news_id_for_args):
     url = reverse('news:detail', args=news_id_for_args)
     response = client.post(url, data=form_data)
     login_url = reverse('users:login')
