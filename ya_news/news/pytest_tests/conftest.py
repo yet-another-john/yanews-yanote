@@ -1,25 +1,27 @@
-import pytest
 from datetime import datetime, timedelta
+from django.utils import timezone
+
+import pytest
 from django.test.client import Client
-from news.models import News, Comment
+from news.models import Comment, News
 
 
 @pytest.fixture
 def anonymous_user(django_user_model):
     anonymous_user = django_user_model.objects.create(
-        username='Анонимный пользователь')
+        username='Аноним пользователь')
     return anonymous_user
 
 
 @pytest.fixture
-def anonymous_user1(django_user_model):
-    return django_user_model.objects.create(username='Анонимный пользователь1')
+def another_anonymous_user(django_user_model):
+    return django_user_model.objects.create(username='Аноним пользователь #2')
 
 
 @pytest.fixture
-def anonymous_user1_client(anonymous_user1):
+def another_anonymous_user_client(another_anonymous_user):
     client = Client()
-    client.force_login(anonymous_user1)
+    client.force_login(another_anonymous_user)
     return client
 
 
@@ -82,13 +84,13 @@ def comment(author, news):
 
 
 @pytest.fixture
-def comment1(not_author, news):
-    comment1 = Comment.objects.create(
+def another_comment(not_author, news):
+    another_comment = Comment.objects.create(
         news_id=news.id,
         text='Текст заметки',
         author=not_author,
     )
-    return comment1
+    return another_comment
 
 
 @pytest.fixture
@@ -102,17 +104,21 @@ def comment_list(author, news):
                 author=author,
             )
         )
+    now = timezone.now()
+    for comment in comment_list:
+        comment.created = now + timedelta(days=comment.id)
+        comment.save()
     return comment_list
 
 
 @pytest.fixture
-def id_for_args(comment):
+def comment_id_for_args(comment):
     return (comment.id,)
 
 
 @pytest.fixture
-def id_for_args1(comment1):
-    return (comment1.id,)
+def another_comment_id_for_args(another_comment):
+    return (another_comment.id,)
 
 
 @pytest.fixture

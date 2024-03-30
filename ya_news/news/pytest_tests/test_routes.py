@@ -1,4 +1,5 @@
 from http import HTTPStatus
+
 import pytest
 from django.urls import reverse
 from pytest_django.asserts import assertRedirects
@@ -38,8 +39,8 @@ def test_delete_edit_comment_for_author(author_client, name, comment):
 @pytest.mark.parametrize(
     'name, args',
     (
-        ('news:edit', pytest.lazy_fixture('id_for_args')),
-        ('news:delete', pytest.lazy_fixture('id_for_args'))
+        ('news:edit', pytest.lazy_fixture('comment_id_for_args')),
+        ('news:delete', pytest.lazy_fixture('comment_id_for_args'))
     ),
 )
 def test_redirects(client, name, args):
@@ -54,7 +55,10 @@ def test_redirects(client, name, args):
     'name',
     ('news:delete', 'news:edit',)
 )
-def test_delete_edit_comment_of_another_user(author_client, name, comment1):
-    url = reverse(name, args=(comment1.id,))
+def test_delete_edit_comment_of_another_user(
+    author_client,
+    name, another_comment
+):
+    url = reverse(name, args=(another_comment.id,))
     response = author_client.get(url)
     assert response.status_code == HTTPStatus.NOT_FOUND
